@@ -74,7 +74,7 @@ function handlerForecast(evt) {
 
 function serviceWeather(city, days) {
   const BASE_URL = "http://api.weatherapi.com/v1";
-  const API_KEY = "61069fb8abf74210b7d232148231510";
+  const API_KEY = "3c06bd2db8074f28997175427232810";
   const params = new URLSearchParams({
     key: API_KEY,
     q: city,
