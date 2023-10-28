@@ -68,7 +68,10 @@ function handlerForecast(evt) {
   const { city, days } = evt.currentTarget.elements;
 
   serviceWeather(city.value, days.value)
-    .then((data) => elements.list.innerHTML = createMarkup(data.forecast.forecastday))
+      .then((data) => elements.list.innerHTML = createMarkup(data.forecast.forecastday))
+    
+    
+   // 
     .catch((err) => console.log(err));
 }
 
@@ -82,8 +85,9 @@ function serviceWeather(city, days) {
     days,
   });
 
-  return fetch(`${BASE_URL}/forecast.json?${params}`).then((resp) => {
-    console.log(resp);
+    return fetch(`${BASE_URL}/forecast.json?${params}`)
+    .then((resp) => {
+    //console.log(resp);
     if (!resp.ok) {
       throw new Error(resp.statusText);
     }
@@ -93,14 +97,10 @@ function serviceWeather(city, days) {
 }
 
 function createMarkup(arr) {
+    console.log(arr)
   return arr
     .map(
-      ({
-        date,
-        day: {
-          avgtemp_c,
-          condition: { text, icon },
-        },
+      ({date, day: {avgtemp_c, condition: { text, icon },},
       }) => `
     <li class="weather-card">
         <img src="${icon}" alt="${text}" class="weather-icon" />
@@ -113,4 +113,3 @@ function createMarkup(arr) {
 }
 
 
-fetch('https://common-api.rozetka.com.ua/v2/fat-menu/full?front-type=xl&country=UA&lang=ua&r=0.4852046283767446')
