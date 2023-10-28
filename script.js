@@ -1,3 +1,57 @@
+const elements = {
+  form: document.querySelector(".js-search-form"),
+  list: document.querySelector(".js-list"),
+};
+
+elements.form.addEventListener("submit", handlerForecast);
+
+function handlerForecast(evt) {
+  evt.preventDefault();
+
+  const { city, days } = evt.currentTarget.elements;
+
+  serviceWeather(city.value, days.value)
+      .then((data) => elements.list.innerHTML = createMarkup(data.forecast.forecastday))
+    
+    .catch((err) => console.log(err));
+}
+
+function serviceWeather(city, days) {
+  const BASE_URL = "http://api.weatherapi.com/v1";
+  const API_KEY = "3c06bd2db8074f28997175427232810";
+  const params = new URLSearchParams({
+    key: API_KEY,
+    q: city,
+    lang: "uk",
+    days,
+  });
+
+    return fetch(`${BASE_URL}/forecast.json?${params}`)
+    .then((resp) => {
+    //console.log(resp);
+    if (!resp.ok) {
+      throw new Error(resp.statusText);
+    }
+
+    return resp.json();
+  });
+}
+
+function createMarkup(arr) {
+    console.log(arr)
+  return arr
+    .map(
+      ({date, day: {avgtemp_c, condition: { text, icon },},
+      }) => `
+    <li class="weather-card">
+        <img src="${icon}" alt="${text}" class="weather-icon" />
+        <h2 class="date">${date}</h2>
+        <h3 class="weather-text">${text}</h3>
+        <h3 class="temperature">${avgtemp_c} °C</h3>
+    </li>`
+    )
+    .join("");
+}
 // *********Links********* \\
 // https://www.postman.com/downloads/
 // https://rickandmortyapi.com/documentation
@@ -54,62 +108,4 @@
 // !!! ЗВЕРНИ УВАГУ ЩО API_KEY ПІСЛЯ РЕЄСТРАЦІЇ ВАЛІДНИЙ 21 ДЕНЬ !!!.
 
 // 61069fb8abf74210b7d232148231510
-
-const elements = {
-  form: document.querySelector(".js-search-form"),
-  list: document.querySelector(".js-list"),
-};
-
-elements.form.addEventListener("submit", handlerForecast);
-
-function handlerForecast(evt) {
-  evt.preventDefault();
-
-  const { city, days } = evt.currentTarget.elements;
-
-  serviceWeather(city.value, days.value)
-      .then((data) => elements.list.innerHTML = createMarkup(data.forecast.forecastday))
-    
-    
-   // 
-    .catch((err) => console.log(err));
-}
-
-function serviceWeather(city, days) {
-  const BASE_URL = "http://api.weatherapi.com/v1";
-  const API_KEY = "3c06bd2db8074f28997175427232810";
-  const params = new URLSearchParams({
-    key: API_KEY,
-    q: city,
-    lang: "uk",
-    days,
-  });
-
-    return fetch(`${BASE_URL}/forecast.json?${params}`)
-    .then((resp) => {
-    //console.log(resp);
-    if (!resp.ok) {
-      throw new Error(resp.statusText);
-    }
-
-    return resp.json();
-  });
-}
-
-function createMarkup(arr) {
-    console.log(arr)
-  return arr
-    .map(
-      ({date, day: {avgtemp_c, condition: { text, icon },},
-      }) => `
-    <li class="weather-card">
-        <img src="${icon}" alt="${text}" class="weather-icon" />
-        <h2 class="date">${date}</h2>
-        <h3 class="weather-text">${text}</h3>
-        <h3 class="temperature">${avgtemp_c} °C</h3>
-    </li>`
-    )
-    .join("");
-}
-
 
