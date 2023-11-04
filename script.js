@@ -1,7 +1,90 @@
 const elements = {
   form: document.querySelector(".js-search-form"),
   list: document.querySelector(".js-list"),
+  //buttonHide: document.querySelector(".search-button")
 };
+
+/---------------------------------------------------------------/
+  
+  const arrDay = [
+  "Неділя",
+  "Понеділок",
+  "Вівторок",
+  "Середа",
+  "Четвер",
+  "П`ятниця",
+  "Субота",
+];
+const namesOfMonth = [
+  "Січень",
+  "Лютий",
+  "Березень",
+  "Квітень",
+  "Травень",
+  "Червень",
+  "Липень",
+  "Серпень",
+  "Вересень",
+  "Жовтень",
+  "Листопад",
+  "Грудень",
+];
+
+const selectors = {
+  divGen: document.querySelector(".div-gen"),
+  date: document.querySelector(".date"),
+  day: document.querySelector(".date-day"),
+  month: document.querySelector(".date-month"),
+  year: document.querySelector(".date-year"),
+  digitalClock: document.querySelector(".digital-clock"),
+  seconds: document.querySelector(".clock-seconds__arrow"),
+  minutes: document.querySelector(".clock-minutes__arrow"),
+  hours: document.querySelector(".clock-hours__arrow"),
+  timeOfDay: document.querySelector('.time-of-day')
+};
+
+selectors.divGen.style.display = "none";
+setInterval(() => {
+  const currentDate = new Date();
+  const day = currentDate.getDay();
+  const date = currentDate.getDate();
+  const month = currentDate.getMonth();
+  const year = currentDate.getFullYear();
+console.log(month);
+  // const hours  = currentDate.getHours();
+  // const minutes = currentDate.getMinutes();
+  // const seconds = currentDate.getSeconds();
+
+  const localTime = currentDate.toLocaleTimeString("uk-Ua");
+  // https://help.sap.com/docs/SAP_BUSINESSOBJECTS_BUSINESS_INTELLIGENCE_PLATFORM/09382741061c40a989fae01e61d54202/46758c5e6e041014910aba7db0e91070.html
+
+  selectors.day.textContent = arrDay[day];
+  selectors.month.textContent = namesOfMonth[month];
+  selectors.date.textContent = date;
+  selectors.year.textContent = year;
+  selectors.digitalClock.textContent = `Поточний час ${localTime}`;
+
+  const hours = currentDate.getHours();
+  const minutes = currentDate.getMinutes();
+  const seconds = currentDate.getSeconds();
+
+  const secondsDeg = (360 / 60) * seconds;
+  const minutesDeg = (360 / 60) * minutes;
+  const hoursDeg = (360 / 12) * hours + (360 / 12 / 60) * minutes;
+
+  if(hoursDeg > 180){
+    selectors.timeOfDay.textContent = 'PM'
+  }else{
+    selectors.timeOfDay.textContent = 'AM'
+  }
+
+  selectors.seconds.style.transform = `rotate(${secondsDeg}deg)`;
+  selectors.minutes.style.transform = `rotate(${minutesDeg}deg)`;
+  selectors.hours.style.transform = `rotate(${hoursDeg}deg)`;
+}, 1000);
+
+  
+/---------------------------------------------------------------/  
 
 elements.form.addEventListener("submit", handlerForecast);
 
@@ -14,6 +97,9 @@ function handlerForecast(evt) {
       .then((data) => elements.list.innerHTML = createMarkup(data.forecast.forecastday))
     
     .catch((err) => console.log(err));
+  
+  elements.form.style.display = "none"
+  selectors.divGen.style.display = "block";
 }
 
 function serviceWeather(city, days) {
@@ -32,7 +118,7 @@ function serviceWeather(city, days) {
     if (!resp.ok) {
       throw new Error(resp.statusText);
     }
-
+console.log(resp.json())
     return resp.json();
   });
 }
